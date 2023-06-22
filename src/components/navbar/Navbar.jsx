@@ -17,13 +17,6 @@ export default function Navbar() {
         <Link to="/home">
           <img src={"/images/uaa.png"} width={36} height={36} alt="logo" />
         </Link>
-        <div className="form-control">
-          <input
-            type="text"
-            placeholder="Cari teman/saudara ..."
-            className="input input-bordered w-32 h-10 text-sm md:w-auto"
-          />
-        </div>
       </div>
 
       <div className="navbar-end gap-4">
@@ -49,7 +42,7 @@ export default function Navbar() {
         </div>
 
         <div className="dropdown dropdown-end">
-          <div className="w-10 avatar online">
+          <div className="w-9 avatar online">
             {user.avatar === null ? (
               <img
                 tabIndex={0}

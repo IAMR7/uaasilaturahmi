@@ -4,6 +4,7 @@ import Post from "../../components/post/Post";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
+import BottomNav from "../../components/bottomnav/BottomNav";
 
 export default function HomePage() {
   const user = useSelector((state) => state.user);
@@ -40,7 +41,7 @@ export default function HomePage() {
         pauseOnHover
         theme="colored"
       />
-      <section className="min-h-screen mt-16 xl:px-72 lg:px-64 px-4 py-6 w-full mb-10">
+      <section className="min-h-screen mt-16 xl:px-72 lg:px-64 px-4 py-6 w-full mb-72">
         <div className="px-0 xl:px-60 min-h-screen rounded-xl">
           <p className="text-lg mb-6">
             Selamat datang, <span className="font-bold">{user.name}</span>
@@ -77,6 +78,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <BottomNav />
     </div>
   );
 }

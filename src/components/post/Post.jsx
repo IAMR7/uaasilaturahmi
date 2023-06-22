@@ -4,6 +4,7 @@ import { api } from "../../api";
 import ModalComments from "../modalcomments/ModalComments";
 import ModalLikes from "../modallikes/ModalLikes";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function Post({
   postId,
@@ -13,8 +14,10 @@ export default function Post({
   content,
   image,
   date,
+  onDelete,
 }) {
   const [post, setPost] = useState();
+  const userRedux = useSelector((state) => state.user);
 
   const getPost = async (postId) => {
     let apipath = `post/${postId}`;
@@ -30,6 +33,11 @@ export default function Post({
         toast.error("Ada kesalahan teknis, silahkan refresh ulang");
       });
   };
+
+  const handleDelete = () => {
+    onDelete(postId);
+  };
+
   return (
     <div className="post rounded-lg border border-base-300 p-1">
       <ToastContainer
@@ -44,11 +52,13 @@ export default function Post({
         pauseOnHover
         theme="colored"
       />
-      <div className="post_head py-1">
-        <div className="flex flex-row items-center gap-4">
-          <div className="w-10 avatar online">
+      <div className="flex flex-row justify-between items-center">
+        <div className="post_head py-1">
+          <div className="flex flex-row items-center">
             {user.avatar === null ? (
               <img
+                width={36}
+                height={36}
                 tabIndex={0}
                 className="rounded-full m-2"
                 src={`/images/${
@@ -60,27 +70,52 @@ export default function Post({
               />
             ) : (
               <img
+                width={36}
+                height={36}
                 tabIndex={0}
                 className="rounded-full m-2"
                 src={`/images/${"female-profile.png"}`}
                 alt="profile-picture"
               />
             )}
-          </div>
 
-          <div className="flex flex-col">
-            <p className="font-medium">
-              {user.name}{" "}
-              {user.verified !== 0 && (
-                <i className="bx bx-fw bx-badge-check text-primary"></i>
-              )}
-            </p>
-            <p className="text-xs">
-              {user.status_id !== null && user.status.status}{" "}
-              {user.major_id !== null && user.major.major}
-            </p>
+            <div className="flex flex-col">
+              <p className="font-medium">
+                {user.name}{" "}
+                {user.verified !== 0 && (
+                  <i className="bx bx-fw bxs-badge-check text-success"></i>
+                )}
+              </p>
+              <p className="text-xs">
+                {user.status_id !== null && user.status.status}{" "}
+                {user.major_id !== null && user.major.major}
+              </p>
+            </div>
           </div>
         </div>
+        {user.id === userRedux.id && (
+          <div className="dropdown dropdown-end">
+            <i className="bx bx-fw bx-dots-vertical-rounded" tabIndex={0}></i>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-32"
+            >
+              <li>
+                <a className="text-xs" onClick={() => toast.success("Yeay")}>
+                  Edit
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-xs text-error"
+                  onClick={() => handleDelete(postId)}
+                >
+                  Hapus
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
       {image !== null ? (
         <div className="relative w-full h-0" style={{ paddingBottom: "100%" }}>
@@ -107,7 +142,7 @@ export default function Post({
           </label>
         </div>
         <p className="text-xs mb-4">
-          Akbar, Imam, dan 19 lainnya menyukai ini.{" "}
+          Akbar dan 19 lainnya menyukai ini.{" "}
           <label htmlFor="modal_like">
             <span className="text-primary">Lihat disini</span>
           </label>

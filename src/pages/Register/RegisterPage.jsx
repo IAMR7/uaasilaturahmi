@@ -1,9 +1,90 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../../api";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [gender, setGender] = useState("Pria");
+  const [majors, setMajors] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [major, setMajor] = useState(null);
+  const [status, setStatus] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleRegister = async () => {
+    let apipath = `register`;
+    let postdata = {
+      email: email,
+      password: password,
+      name: name,
+      username: username,
+      gender: gender,
+      major_id: major.id,
+      status_id: status.id,
+    };
+    return await api.postApi
+      .post(apipath, postdata)
+      .then((response) => {
+        if (response.status === 201) {
+          let resp = response.data;
+          toast.success(resp.success);
+          navigate("/login");
+        } else {
+          toast.error("Terjadi kesalahan, coba ulangi");
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan refresh ulang");
+      });
+  };
+
+  const getMajors = async () => {
+    let apipath = `majors`;
+    return await api.getApi
+      .get(apipath)
+      .then((response) => {
+        if (response.status === 200) {
+          let resp = response.data;
+          setMajors(resp);
+        } else {
+          toast.error("Terjadi kesalahan, coba ulangi");
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan refresh ulang");
+      });
+  };
+
+  const getStatuses = async () => {
+    let apipath = `statuses`;
+    return await api.getApi
+      .get(apipath)
+      .then((response) => {
+        if (response.status === 200) {
+          let resp = response.data;
+          setStatuses(resp);
+        } else {
+          toast.error("Terjadi kesalahan, coba ulangi");
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan refresh ulang");
+      });
+  };
+
+  useEffect(() => {
+    getMajors();
+    getStatuses();
+  }, []);
+
   return (
     <div className="min-h-screen bg-base-200 flex flex-row justify-center items-center px-6 pb-20 pt-10">
-      <div className="card flex-shrink-0 w-full lg:w-1/3 shadow-sm bg-base-100">
+      <div className="card flex-shrink-0 w-full lg:w-1/3 shadow-sm bg-base-100 lg:mb-0 mb-72">
         <div className="card-body w-full">
           <div className="flex flex-row justify-center items-center">
             <img src="/images/uaa.png" alt="" width={86} />
@@ -18,7 +99,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Isikan email"
                   className="input input-bordered w-full text-sm"
-                  defaultValue={""}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="form-control w-full">
@@ -30,7 +111,7 @@ export default function RegisterPage() {
                   placeholder="Isikan password"
                   className="input input-bordered w-full text-sm"
                   autoComplete="password"
-                  defaultValue={""}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -43,7 +124,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Isikan nama"
                   className="input input-bordered w-full text-sm"
-                  defaultValue={""}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="form-control w-full">
@@ -54,7 +135,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Isikan username"
                   className="input input-bordered w-full text-sm"
-                  defaultValue={""}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
@@ -63,18 +144,24 @@ export default function RegisterPage() {
                 <span className="label-text">Jenis Kelamin</span>
               </label>
               <div className="flex flex-row items-center gap-3">
-                <input
-                  type="radio"
-                  aria-label="Laki-laki"
-                  className="btn btn-sm"
-                  defaultChecked={true}
-                />
-                <input
-                  type="radio"
-                  aria-label="Perempuan"
-                  className="btn btn-sm"
-                  defaultChecked={false}
-                />
+                <div
+                  onClick={() => setGender("Pria")}
+                  className={
+                    gender === "Pria" ? "btn btn-sm btn-primary" : "btn btn-sm"
+                  }
+                >
+                  Laki-laki
+                </div>
+                <div
+                  onClick={() => setGender("Perempuan")}
+                  className={
+                    gender === "Perempuan"
+                      ? "btn btn-sm btn-primary"
+                      : "btn btn-sm"
+                  }
+                >
+                  Perempuan
+                </div>
               </div>
             </div>
             <div className="flex flex-row flex-wrap lg:flex-nowrap items-center gap-3">
@@ -85,12 +172,19 @@ export default function RegisterPage() {
                 <select
                   defaultValue={0}
                   className="select select-bordered w-full"
+                  onChange={(e) => setMajor(JSON.parse(e.target.value))}
                 >
                   <option disabled value={0}>
                     Pilih jurusan ...
                   </option>
-                  <option value={1}>S1-Informatika</option>
-                  <option value={2}>S1-Sistem Informasi</option>
+                  {majors.length > 0 &&
+                    majors.map((major) => {
+                      return (
+                        <option key={major.id} value={JSON.stringify(major)}>
+                          {major.major}
+                        </option>
+                      );
+                    })}
                 </select>
               </div>
               <div className="form-control w-full">
@@ -100,12 +194,19 @@ export default function RegisterPage() {
                 <select
                   defaultValue={0}
                   className="select select-bordered w-full"
+                  onChange={(e) => setStatus(JSON.parse(e.target.value))}
                 >
                   <option disabled value={0}>
                     Pilih status ...
                   </option>
-                  <option value={1}>Mahasiswa</option>
-                  <option value={2}>Dosen</option>
+                  {statuses.length > 0 &&
+                    statuses.map((status) => {
+                      return (
+                        <option key={status.id} value={JSON.stringify(status)}>
+                          {status.status}
+                        </option>
+                      );
+                    })}
                 </select>
               </div>
             </div>
@@ -117,7 +218,12 @@ export default function RegisterPage() {
               </Link>
             </div>
             <div className="form-control">
-              <button className="btn btn-primary">Daftar</button>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleRegister()}
+              >
+                Daftar
+              </button>
             </div>
           </div>
         </div>
