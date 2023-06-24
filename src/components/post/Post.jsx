@@ -3,8 +3,9 @@ import { ToastContainer, toast } from "react-toastify";
 import { api } from "../../api";
 import ModalComments from "../modalcomments/ModalComments";
 import ModalLikes from "../modallikes/ModalLikes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import moment from "moment/moment";
 
 export default function Post({
   postId,
@@ -15,8 +16,11 @@ export default function Post({
   image,
   date,
   onDelete,
+  onLike,
+  onDislike,
 }) {
   const [post, setPost] = useState();
+  const [likeFromMe, setLikeFromMe] = useState(null);
   const userRedux = useSelector((state) => state.user);
 
   const getPost = async (postId) => {
@@ -37,6 +41,27 @@ export default function Post({
   const handleDelete = () => {
     onDelete(postId);
   };
+
+  const handleLike = async () => {
+    await onLike(postId);
+    getLikeFromMe();
+  };
+
+  const handleDislike = async (likeId) => {
+    await onDislike(likeId);
+    getLikeFromMe();
+  };
+
+  const getLikeFromMe = () => {
+    let getlike = like.find((me) => {
+      return me.user.id === userRedux.id;
+    });
+    return setLikeFromMe(getlike);
+  };
+
+  useEffect(() => {
+    getLikeFromMe();
+  }, []);
 
   return (
     <div className="post rounded-lg border border-base-300 p-1">
@@ -132,8 +157,19 @@ export default function Post({
       )}
       <div className="px-3 py-2">
         <div className="flex flex-row items-center gap-1 py-2">
-          <div className="btn btn-sm">
-            <i className="bx bx-sm bxs-heart-circle text-primary"></i>
+          <div
+            onClick={() =>
+              likeFromMe && likeFromMe !== null
+                ? handleDislike(likeFromMe.id)
+                : handleLike()
+            }
+            className={
+              likeFromMe && likeFromMe !== null
+                ? "btn btn-sm btn-primary"
+                : "btn btn-sm"
+            }
+          >
+            <i className="bx bx-sm bxs-heart-circle"></i>
             {like.length}
           </div>
           <label htmlFor="modal_comment" className="btn btn-sm">
@@ -142,13 +178,16 @@ export default function Post({
           </label>
         </div>
         <p className="text-xs mb-4">
-          Akbar dan 19 lainnya menyukai ini.{" "}
+          {like.length} orang menyukai ini.{" "}
           <label htmlFor="modal_like">
             <span className="text-primary">Lihat disini</span>
           </label>
         </p>
         {image !== null && <p className="text-sm">{content}</p>}
-        <p className="text-xs italic mt-4">Jumat, 21 Juni 2023</p>
+        <p className="text-xs italic mt-4">
+          {moment(date).startOf("day").fromNow()} <br />
+          {moment(date).format("LLLL")}
+        </p>
       </div>
 
       <input

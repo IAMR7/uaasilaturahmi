@@ -55,10 +55,6 @@ export default function ProfilePage() {
     }
   }, [user.id]);
 
-  const asal = () => {
-    toast.success("saya fungsi asal");
-  };
-
   const addPost = async () => {
     let apipath = `post`;
     let postdata = {
@@ -230,7 +226,6 @@ export default function ProfilePage() {
                     content={post.content}
                     date={post.created_at}
                     onDelete={delPost}
-                    mbuh={asal}
                   />
                 );
               })

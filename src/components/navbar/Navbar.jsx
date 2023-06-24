@@ -11,6 +11,7 @@ export default function Navbar() {
     navigate("/login");
     dispatch(clearUser());
   };
+
   return (
     <div className="navbar bg-base-100 lg:px-40 px-6 border-b border-base-300 fixed z-10 top-0">
       <div className="navbar-start gap-4">
@@ -42,27 +43,27 @@ export default function Navbar() {
         </div>
 
         <div className="dropdown dropdown-end">
-          <div className="w-9 avatar online">
-            {user.avatar === null ? (
-              <img
-                tabIndex={0}
-                className="rounded-full m-2"
-                src={`/images/${
-                  user.gender === "Pria"
-                    ? "male-profile.png"
-                    : "female-profile.png"
-                }`}
-                alt="profile-picture"
-              />
-            ) : (
-              <img
-                tabIndex={0}
-                className="rounded-full m-2"
-                src={`/images/${"female-profile.png"}`}
-                alt="profile-picture"
-              />
-            )}
-          </div>
+          {user.avatar === null ? (
+            <img
+              width={36}
+              tabIndex={0}
+              className="rounded-full m-2"
+              src={`/images/${
+                user.gender === "Pria"
+                  ? "male-profile.png"
+                  : "female-profile.png"
+              }`}
+              alt="profile-picture"
+            />
+          ) : (
+            <img
+              width={36}
+              tabIndex={0}
+              className="rounded-full m-2"
+              src={`/images/${"female-profile.png"}`}
+              alt="profile-picture"
+            />
+          )}
 
           <ul
             tabIndex={0}

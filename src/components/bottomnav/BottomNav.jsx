@@ -1,22 +1,60 @@
+import { NavLink } from "react-router-dom";
+
 export default function BottomNav() {
   return (
     <div className="btm-nav">
-      <button className="active text-primary">
+      <NavLink
+        to={"/home"}
+        className={({ isActive, isPending }) =>
+          isPending
+            ? "text-secondary"
+            : isActive
+            ? "active text-primary"
+            : "text-secondary"
+        }
+      >
         <i className="bx bx-fw bx-home"></i>
         <span className="btm-nav-label text-sm">Beranda</span>
-      </button>
-      <button className="text-secondary">
+      </NavLink>
+      <NavLink
+        to={"/search"}
+        className={({ isActive, isPending }) =>
+          isPending
+            ? "text-secondary"
+            : isActive
+            ? "active text-primary"
+            : "text-secondary"
+        }
+      >
         <i className="bx bx-fw bx-search"></i>
         <span className="btm-nav-label text-sm">Cari</span>
-      </button>
-      <button className="text-secondary">
+      </NavLink>
+      <NavLink
+        to={"/friends"}
+        className={({ isActive, isPending }) =>
+          isPending
+            ? "text-secondary"
+            : isActive
+            ? "active text-primary"
+            : "text-secondary"
+        }
+      >
         <i className="bx bx-fw bx-group"></i>
         <span className="btm-nav-label text-sm">Teman</span>
-      </button>
-      <button className="text-secondary">
+      </NavLink>
+      <NavLink
+        to={"/me"}
+        className={({ isActive, isPending }) =>
+          isPending
+            ? "text-secondary"
+            : isActive
+            ? "active text-primary"
+            : "text-secondary"
+        }
+      >
         <i className="bx bx-fw bx-user"></i>
         <span className="btm-nav-label text-sm">Saya</span>
-      </button>
+      </NavLink>
     </div>
   );
 }
