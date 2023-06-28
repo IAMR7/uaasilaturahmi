@@ -1,5 +1,11 @@
+import { useState } from "react";
+
 /* eslint-disable react/prop-types */
-export default function ModalComments({ comment }) {
+export default function ModalComments({ comment, commentPostId }) {
+  const [writeComment, setWriteComment] = useState("");
+  const sayHi = async () => {
+    console.log(commentPostId);
+  };
   return (
     <div id="modal_comment" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box h-full">
@@ -20,7 +26,12 @@ export default function ModalComments({ comment }) {
             ></textarea>
             <div className="flex justify-between items-center">
               <button className="btn btn-sm">Upload Gambar</button>
-              <button className="btn btn-sm btn-primary">Komentar</button>
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => sayHi()}
+              >
+                Komentar
+              </button>
             </div>
           </div>
           <div className="divider text-base-300 mt-6 h-1 text-sm">Komentar</div>

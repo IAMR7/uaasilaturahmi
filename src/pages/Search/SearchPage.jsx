@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { api } from "../../api";
 import BottomNav from "../../components/bottomnav/BottomNav";
 import Navbar from "../../components/navbar/Navbar";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useState("");
   const [users, setUsers] = useState();
+  const user = useSelector((state) => state.user);
+  const [friends, setFriends] = useState([]);
 
   const searchUser = async (params) => {
     let apipath = `user/search?search=${params}`;
@@ -15,16 +18,75 @@ export default function SearchPage() {
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
-          setUsers(resp);
+          let check = resp.filter((dt) => {
+            return dt.id !== user.id;
+          });
+          getFriends();
+          setUsers(check);
         }
       })
       .catch(() => {
         toast.error("Ada kesalahan teknis, silahkan refresh ulang");
       });
   };
+
+  const handleAddfriend = async (friendId) => {
+    let apipath = `friendship`;
+    let postdata = {
+      user_id: user.id,
+      friend_user_id: friendId,
+      status: "Menunggu Konfirmasi",
+    };
+    return await api.postApi
+      .post(apipath, postdata)
+      .then((response) => {
+        if (response.status === 201) {
+          let resp = response.data;
+          searchUser(searchParams);
+          toast.success(resp.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan refresh ulang");
+      });
+  };
+
+  const getFriends = useCallback(async () => {
+    let apipath = `friendships/${user.id}`;
+    try {
+      const response = await api.getApi.get(apipath);
+      if (response.status === 200) {
+        let resp = response.data;
+        let friends = [];
+        resp.map((friend) => {
+          if (friend.user.id !== user.id) {
+            friends.push(friend.user);
+          } else {
+            friends.push(friend.friend_user);
+          }
+        });
+        setFriends(friends);
+      }
+    } catch {
+      toast.error("Ada kesalahan teknis, silahkan refresh ulang");
+    }
+  }, [user.id]);
+
   return (
     <div className="page-content">
       <Navbar />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <section className="min-h-screen mt-16 xl:px-72 lg:px-64 px-4 py-6 w-full mb-72">
         <div className="search-input flex flex-row gap-2 items-center mb-4">
           <div className="form-control w-11/12">
@@ -33,7 +95,6 @@ export default function SearchPage() {
               placeholder="Cari teman/saudara ..."
               className="input input-bordered w-full h-12 text-sm"
               onChange={(e) => {
-                e.target.value === "" && searchParams("");
                 setSearchParams(e.target.value);
               }}
             />
@@ -83,14 +144,23 @@ export default function SearchPage() {
                         <div className="flex flex-col">
                           <p className="font-semibold">{user.name}</p>
                           <p className="text-sm">
-                            {user.status_id !== null && user.status.status}{" "}
+                            {user.status_id !== null &&
+                            user.status.status !== "Mahasiswa"
+                              ? user.status.status
+                              : ""}{" "}
                             {user.major_id !== null && user.major.major}
                           </p>
                         </div>
                       </div>
-                      <button className="btn btn-sm">
-                        <i className="bx bx-fw bx-plus"></i>
-                      </button>
+
+                      {!friends.some((friend) => friend.id === user.id) && (
+                        <button
+                          className="btn btn-sm"
+                          onClick={() => handleAddfriend(user.id)}
+                        >
+                          <i className="bx bx-fw bx-plus"></i>
+                        </button>
+                      )}
                     </div>
                   </div>
                 );

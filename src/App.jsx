@@ -9,8 +9,8 @@ import PasswordEditPage from "./pages/Password Edit/PasswordEditPage";
 import { useSelector } from "react-redux";
 import NotFoundPage from "./pages/Error/NotFoundPage";
 import SearchPage from "./pages/Search/SearchPage";
-import FriendPage from "./pages/Friend/FriendPage";
 import MePage from "./pages/Me/MePage";
+import NotificationsPage from "./pages/Notification/NotificationsPage";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -24,7 +24,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={user ? <HomePage /> : <LoginPage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/friends" element={<FriendPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/me" element={<MePage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/edit" element={<ProfileEditPage />} />

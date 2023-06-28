@@ -29,7 +29,7 @@ export default function BottomNav() {
         <i className="bx bx-fw bx-search"></i>
         <span className="btm-nav-label text-sm">Cari</span>
       </NavLink>
-      <NavLink
+      {/* <NavLink
         to={"/friends"}
         className={({ isActive, isPending }) =>
           isPending
@@ -41,6 +41,19 @@ export default function BottomNav() {
       >
         <i className="bx bx-fw bx-group"></i>
         <span className="btm-nav-label text-sm">Teman</span>
+      </NavLink> */}
+      <NavLink
+        to={"/notifications"}
+        className={({ isActive, isPending }) =>
+          isPending
+            ? "text-secondary"
+            : isActive
+            ? "active text-primary"
+            : "text-secondary"
+        }
+      >
+        <i className="bx bx-fw bx-bell"></i>
+        <span className="btm-nav-label text-sm">Notifikasi</span>
       </NavLink>
       <NavLink
         to={"/me"}

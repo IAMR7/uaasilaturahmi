@@ -22,27 +22,6 @@ export default function Navbar() {
 
       <div className="navbar-end gap-4">
         <div className="dropdown dropdown-end">
-          <div tabIndex={0} className="indicator m-2">
-            <i className="bx bx-fw bx-bell"></i>
-            <span className="badge badge-xs badge-primary indicator-item"></span>
-          </div>
-          <div className="dropdown-content menu shadow bg-base-100 rounded-box w-80 py-4">
-            <div className="flex flex-row px-3 justify-between items-center">
-              <p>Notifikasi (5)</p>
-              <p className="text-primary">Tandai semua dibaca</p>
-            </div>
-            <ul className="mt-3">
-              <li>
-                <p className="text-sm">Akbar menerima pertemanan kamu</p>
-              </li>
-              <li>
-                <p className="text-sm">Akbar menerima pertemanan kamu</p>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="dropdown dropdown-end">
           {user.avatar === null ? (
             <img
               width={36}

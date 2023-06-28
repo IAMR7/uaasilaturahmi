@@ -9,72 +9,26 @@ import BottomNav from "../../components/bottomnav/BottomNav";
 export default function HomePage() {
   const user = useSelector((state) => state.user);
   const [posts, setPosts] = useState();
+  const [likeFromMe, setLikeFromMe] = useState();
 
   const getAllPosts = async () => {
     let apipath = `posts/all/${user.id}`;
-    return await api.getApi
-      .get(apipath)
-      .then((response) => {
-        if (response.status === 200) {
-          let resp = response.data;
-          setPosts(resp);
-        }
-      })
-      .catch(() => {
-        toast.error("Ada kesalahan teknis, silahkan refresh ulang");
-      });
-  };
-
-  const delPost = async (postId) => {
-    let apipath = `post/${postId}`;
-    return await api.delApi
-      .delete(apipath)
-      .then((response) => {
-        if (response.status === 200) {
-          let resp = response.data;
-          getAllPosts();
-          toast.success(resp.message);
-        }
-      })
-      .catch(() => {
-        toast.error("Ada kesalahan teknis, silahkan coba lagi");
-      });
-  };
-
-  const likePost = async (postId) => {
-    let apipath = `like`;
-    let postdata = {
-      user_id: user.id,
-      post_id: postId,
-    };
-    return await api.postApi
-      .post(apipath, postdata)
-      .then((response) => {
-        if (response.status === 201) {
-          let resp = response.data;
-          getAllPosts();
-          toast.success(resp.message);
-        }
-      })
-      .catch(() => {
-        toast.error("Ada kesalahan teknis, silahkan coba lagi");
-      });
-  };
-
-  const dislikePost = async (likeId) => {
-    let apipath = `like/${likeId}`;
-    return await api.delApi
-      .delete(apipath)
-      .then((response) => {
-        if (response.status === 200) {
-          let resp = response.data;
-          getAllPosts();
-          toast.success(resp.message);
-        }
-      })
-      .catch(() => {
-        toast.error("Ada kesalahan teknis, silahkan coba lagi");
-      });
+    try {
+      const response = await api.getApi.get(apipath);
+      if (response.status === 200) {
+        let resp = response.data;
+        let getlike = resp.map((post) => {
+          return post.like.find((me) => {
+            return me.user.id === user.id;
+          });
+        });
+        setLikeFromMe(getlike);
+        setPosts(resp);
+      }
+    } catch (error) {
+      toast.error("Ada kesalahan teknis, silahkan coba lagi");
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -113,20 +67,19 @@ export default function HomePage() {
           </div>
           <div className="list-post flex flex-col gap-3">
             {posts ? (
-              posts.map((post) => {
+              posts.map((post, index) => {
                 return (
                   <Post
-                    postId={post.id}
                     key={post.id}
+                    postId={post.id}
                     user={post.user}
                     comment={post.comment}
                     like={post.like}
                     image={post.image}
                     content={post.content}
                     date={post.created_at}
-                    onDelete={delPost}
-                    onLike={likePost}
-                    onDislike={dislikePost}
+                    likeFromMe={likeFromMe[index]}
+                    getAllPosts={getAllPosts}
                   />
                 );
               })

@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState("");
   const [countLikes, setCountLikes] = useState(0);
+  const [likeFromMe, setLikeFromMe] = useState();
 
   const getFriends = useCallback(async () => {
     let apipath = `friendships/${user.id}`;
@@ -28,7 +29,6 @@ export default function ProfilePage() {
             friends.push(friend.friend_user);
           }
         });
-        console.log(friends);
         setFriends(friends);
       }
     } catch {
@@ -36,24 +36,33 @@ export default function ProfilePage() {
     }
   }, [user.id]);
 
-  const getPosts = useCallback(async () => {
+  const getPosts = async () => {
     let apipath = `posts/${user.id}`;
     try {
       const response = await api.getApi.get(apipath);
       if (response.status === 200) {
         let resp = response.data;
-        setPosts(resp);
+        let getlike = resp.map((post) => {
+          return post.like.find((me) => {
+            return me.user.id === user.id;
+          });
+        });
         let countlike = resp.reduce(
           (total, post) => total + post.like.length,
           0
         );
+        setPosts(resp);
+        setLikeFromMe(getlike);
         setCountLikes(countlike);
-        //console.log(countlike);
       }
     } catch {
       toast.error("Ada kesalahan teknis, silahkan refresh ulang");
     }
-  }, [user.id]);
+  };
+
+  const sayHello = () => {
+    toast.success("SAY HELLO");
+  };
 
   const addPost = async () => {
     let apipath = `post`;
@@ -76,21 +85,21 @@ export default function ProfilePage() {
       });
   };
 
-  const delPost = async (postId) => {
-    let apipath = `post/${postId}`;
-    return await api.delApi
-      .delete(apipath)
-      .then((response) => {
-        if (response.status === 200) {
-          let resp = response.data;
-          getPosts();
-          toast.success(resp.message);
-        }
-      })
-      .catch(() => {
-        toast.error("Ada kesalahan teknis, silahkan coba lagi");
-      });
-  };
+  // const delPost = async (postId) => {
+  //   let apipath = `post/${postId}`;
+  //   return await api.delApi
+  //     .delete(apipath)
+  //     .then((response) => {
+  //       if (response.status === 200) {
+  //         let resp = response.data;
+  //         getPosts();
+  //         toast.success(resp.message);
+  //       }
+  //     })
+  //     .catch(() => {
+  //       toast.error("Ada kesalahan teknis, silahkan coba lagi");
+  //     });
+  // };
 
   useEffect(() => {
     getFriends();
@@ -214,18 +223,20 @@ export default function ProfilePage() {
           </div>
           <div className="list-post flex flex-col gap-3">
             {posts ? (
-              posts.map((post) => {
+              posts.map((post, index) => {
                 return (
                   <Post
-                    postId={post.id}
                     key={post.id}
+                    postId={post.id}
                     user={post.user}
                     comment={post.comment}
                     like={post.like}
                     image={post.image}
                     content={post.content}
                     date={post.created_at}
-                    onDelete={delPost}
+                    likeFromMe={likeFromMe[index]}
+                    getPosts={getPosts}
+                    sayHello={sayHello}
                   />
                 );
               })
