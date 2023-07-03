@@ -8,11 +8,12 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  const [gender, setGender] = useState("Pria");
+  const [gender, setGender] = useState("Laki-laki");
   const [majors, setMajors] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [major, setMajor] = useState(null);
   const [status, setStatus] = useState(null);
+  const [year, setYear] = useState("");
 
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ export default function RegisterPage() {
       gender: gender,
       major_id: major.id,
       status_id: status.id,
+      year_generation: year,
     };
     return await api.postApi
       .post(apipath, postdata)
@@ -145,9 +147,11 @@ export default function RegisterPage() {
               </label>
               <div className="flex flex-row items-center gap-3">
                 <div
-                  onClick={() => setGender("Pria")}
+                  onClick={() => setGender("Laki-laki")}
                   className={
-                    gender === "Pria" ? "btn btn-sm btn-primary" : "btn btn-sm"
+                    gender === "Laki-laki"
+                      ? "btn btn-sm btn-primary"
+                      : "btn btn-sm"
                   }
                 >
                   Laki-laki
@@ -207,6 +211,28 @@ export default function RegisterPage() {
                         </option>
                       );
                     })}
+                </select>
+              </div>
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Angkatan</span>
+                </label>
+                <select
+                  defaultValue={0}
+                  className="select select-bordered w-full"
+                  onChange={(e) => setYear(e.target.value)}
+                >
+                  <option disabled value={0}>
+                    Pilih angkatan ...
+                  </option>
+                  <option value={"2015"}>2015</option>
+                  <option value={"2016"}>2016</option>
+                  <option value={"2017"}>2017</option>
+                  <option value={"2018"}>2018</option>
+                  <option value={"2019"}>2019</option>
+                  <option value={"2020"}>2015</option>
+                  <option value={"2021"}>2021</option>
+                  <option value={"2022"}>2022</option>
                 </select>
               </div>
             </div>

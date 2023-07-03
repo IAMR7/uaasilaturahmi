@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
+import { config } from "../../config";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -131,11 +132,20 @@ export default function ProfilePage() {
         </div>
         <div className="border border-base-300 rounded-lg p-1">
           <div className="cover_profile h-40 w-full relative">
-            <img
-              className="absolute top-0 left-0 rounded-lg object-cover w-full h-full"
-              src={"/images/cover-default.jpg"}
-              alt="post-picture"
-            />
+            {user.cover === null ? (
+              <img
+                className="absolute top-0 left-0 rounded-lg object-cover w-full h-full"
+                src={"/images/cover-default.jpg"}
+                alt="post-picture"
+              />
+            ) : (
+              <img
+                className="absolute top-0 left-0 rounded-lg object-cover w-full h-full"
+                src={`${config.API_IMG_URL}/covers/${user.cover}`}
+                alt="post-picture"
+              />
+            )}
+
             <div className="pic_profile absolute -bottom-10 left-3 z-0">
               {user.avatar === null ? (
                 <img
@@ -143,7 +153,7 @@ export default function ProfilePage() {
                   width={100}
                   height={100}
                   src={`/images/${
-                    user.gender === "Pria"
+                    user.gender === "Laki-laki"
                       ? "male-profile.png"
                       : "female-profile.png"
                   }`}
@@ -154,7 +164,7 @@ export default function ProfilePage() {
                   width={100}
                   height={100}
                   className="rounded-full"
-                  src={`/images/${"female-profile.png"}`}
+                  src={`${config.API_IMG_URL}/avatars/${user.avatar}`}
                   alt="profile-picture"
                 />
               )}
@@ -167,11 +177,14 @@ export default function ProfilePage() {
                 onClick={() => toast.success("tes")}
               >
                 {user.name.toUpperCase()}{" "}
-                <i className="bx bx-fw bxs-badge-check text-success"></i>
+                {user.verified !== 0 && (
+                  <i className="bx bx-fw bxs-badge-check text-success"></i>
+                )}
               </h1>
               <p className="text-xs">
-                {user.status !== null && user.status.status}{" "}
-                {user.major !== null && user.major.major}
+                {user.status && user.status !== null && user.status.status}{" "}
+                {user.major && user.major !== null && user.major.major} (
+                {user.major && user.major !== null && user.year_generation})
               </p>
               <div className="flex flex-row justify-start items-center gap-2 mt-2">
                 <p className="text-xs">
@@ -279,7 +292,7 @@ export default function ProfilePage() {
                             height={36}
                             className="rounded-full m-2"
                             src={`/images/${
-                              friend.gender === "Pria"
+                              friend.gender === "Laki-laki"
                                 ? "male-profile.png"
                                 : "female-profile.png"
                             }`}

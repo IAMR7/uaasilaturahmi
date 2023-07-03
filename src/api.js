@@ -1,6 +1,8 @@
 import axios from "axios";
+import { config } from "./config";
 
-var baseurl = "http://127.0.0.1:8000/api";
+var baseurl = config.API_URL;
+
 // var baseurl = "https://dummyjson.com";
 
 export const api = {

@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { clearUser, setUser } from "../../redux/slices/userSlice";
+import {
+  clearUser,
+  fetchUser,
+  setToken,
+  setUser,
+} from "../../redux/slices/userSlice";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
   const [email, setEmail] = useState();
   const [password, setpassword] = useState();
@@ -23,8 +29,9 @@ export default function LoginPage() {
       .post(apipath, postdata)
       .then((response) => {
         if (response.status === 200) {
-          let resp = response.data;
-          dispatch(setUser(resp));
+          let { user, token } = response.data;
+          dispatch(setUser({ user }));
+          dispatch(setToken(token));
           toast.success("Yeay! kamu berhasil login");
           navigate("/home");
         } else {
@@ -35,6 +42,8 @@ export default function LoginPage() {
         console.log(error);
       });
   };
+
+  console.log(user);
 
   return (
     <div className="hero min-h-screen bg-base-200">

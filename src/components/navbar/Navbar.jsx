@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../redux/slices/userSlice";
+import { config } from "../../config";
 
 export default function Navbar() {
   const user = useSelector((state) => state.user);
@@ -28,7 +29,7 @@ export default function Navbar() {
               tabIndex={0}
               className="rounded-full m-2"
               src={`/images/${
-                user.gender === "Pria"
+                user.gender === "Laki-laki"
                   ? "male-profile.png"
                   : "female-profile.png"
               }`}
@@ -39,7 +40,7 @@ export default function Navbar() {
               width={36}
               tabIndex={0}
               className="rounded-full m-2"
-              src={`/images/${"female-profile.png"}`}
+              src={`${config.API_IMG_URL}/avatars/${user.avatar}`}
               alt="profile-picture"
             />
           )}

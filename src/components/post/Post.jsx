@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
@@ -29,8 +30,12 @@ export default function Post({
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
-          getAllPosts();
-          getPosts();
+
+          if (typeof getPosts === "function") {
+            getPosts();
+          } else if (typeof getAllPosts === "function") {
+            getAllPosts();
+          }
           toast.success(resp.message);
         }
       })
@@ -51,8 +56,11 @@ export default function Post({
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
-          getAllPosts();
-          getPosts();
+          if (typeof getPosts === "function") {
+            getPosts();
+          } else if (typeof getAllPosts === "function") {
+            getAllPosts();
+          }
           toast.success(resp.message);
         }
       })
@@ -70,8 +78,11 @@ export default function Post({
     try {
       const response = await api.postApi.post(apipath, postdata);
       if (response.status === 201) {
-        getAllPosts();
-        getPosts();
+        if (typeof getPosts === "function") {
+          getPosts();
+        } else if (typeof getAllPosts === "function") {
+          getAllPosts();
+        }
       }
     } catch (error) {
       console.log(error);
@@ -84,8 +95,11 @@ export default function Post({
     try {
       const response = await api.delApi.delete(apipath);
       if (response.status === 200) {
-        getAllPosts();
-        getPosts();
+        if (typeof getPosts === "function") {
+          getPosts();
+        } else if (typeof getAllPosts === "function") {
+          getAllPosts();
+        }
       }
     } catch (error) {
       toast.error("Ada kesalahan teknis, silahkan coba lagi");
@@ -105,8 +119,11 @@ export default function Post({
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
-          getAllPosts();
-          getPosts();
+          if (typeof getPosts === "function") {
+            getPosts();
+          } else if (typeof getAllPosts === "function") {
+            getAllPosts();
+          }
           toast.success(resp.message);
         }
       })
@@ -128,8 +145,11 @@ export default function Post({
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
-          getAllPosts();
-          getPosts();
+          if (typeof getPosts === "function") {
+            getPosts();
+          } else if (typeof getAllPosts === "function") {
+            getAllPosts();
+          }
           toast.success(resp.message);
         }
       })
@@ -145,8 +165,11 @@ export default function Post({
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
-          getAllPosts();
-          getPosts();
+          if (typeof getPosts === "function") {
+            getPosts();
+          } else if (typeof getAllPosts === "function") {
+            getAllPosts();
+          }
           toast.success(resp.message);
         }
       })
@@ -178,7 +201,7 @@ export default function Post({
                 height={36}
                 className="rounded-full m-2"
                 src={`/images/${
-                  user.gender === "Pria"
+                  user.gender === "Laki-laki"
                     ? "male-profile.png"
                     : "female-profile.png"
                 }`}
@@ -203,7 +226,8 @@ export default function Post({
               </p>
               <p className="text-xs">
                 {user.status_id !== null && user.status.status}{" "}
-                {user.major_id !== null && user.major.major}
+                {user.major_id !== null && user.major.major} (
+                {user.major_id !== null && user.year_generation})
               </p>
             </div>
           </div>
@@ -303,11 +327,6 @@ export default function Post({
             onClick={() =>
               likeFromMe ? unlikePost(likeFromMe.id) : likePost(postId)
             }
-            // onClick={() =>
-            //   likeFromMe && likeFromMe !== null
-            //     ? console.log("unlike")
-            //     : console.log("like")
-            // }
             className={likeFromMe ? "btn btn-sm btn-primary" : "btn btn-sm"}
           >
             <i className="bx bx-sm bxs-heart-circle"></i>
@@ -393,7 +412,7 @@ export default function Post({
                             width={36}
                             className="rounded-full m-2"
                             src={`/images/${
-                              item.user.gender === "Pria"
+                              item.user.gender === "Laki-laki"
                                 ? "male-profile.png"
                                 : "female-profile.png"
                             }`}
@@ -414,7 +433,7 @@ export default function Post({
                           <p className="text-xs">{item.content}</p>
                         </div>
                       </div>
-                      {user.id === userRedux.id && (
+                      {item.user.id === userRedux.id && (
                         <div className="dropdown dropdown-end">
                           <i
                             className="bx bx-fw bx-dots-vertical-rounded"
@@ -544,7 +563,7 @@ export default function Post({
                               tabIndex={0}
                               className="rounded-full m-2"
                               src={`/images/${
-                                item.user.gender === "Pria"
+                                item.user.gender === "Laki-laki"
                                   ? "male-profile.png"
                                   : "female-profile.png"
                               }`}
