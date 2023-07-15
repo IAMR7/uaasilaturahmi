@@ -4,12 +4,17 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import RegisterPage from "./pages/Register/RegisterPage";
 import HomePage from "./pages/Home/HomePage";
 import ProfilePage from "./pages/Profile/ProfilePage";
-import ProfileEditPage from "./pages/Profile/Profile Edit/ProfileEditPage";
-import PasswordEditPage from "./pages/Password Edit/PasswordEditPage";
+import ProfileEditPage from "./pages/Profile/ProfileEdit/ProfileEditPage";
+import PasswordEditPage from "./pages/PasswordEdit/PasswordEditPage";
 import NotFoundPage from "./pages/Error/NotFoundPage";
 import SearchPage from "./pages/Search/SearchPage";
 import MePage from "./pages/Me/MePage";
 import NotificationsPage from "./pages/Notification/NotificationsPage";
+import FriendPage from "./pages/Friend/FriendPage";
+import VerifiedPage from "./pages/Verified/VerifiedPage";
+import TicketPage from "./pages/Ticket/TicketPage";
+import DashboardPage from "./pages/Admin/Dashboard/DashboardPage";
+import UsersManagementPage from "./pages/Admin/UsersManagement/UsersManagementPage";
 
 function App() {
   return (
@@ -24,8 +29,18 @@ function App() {
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/me" element={<MePage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/friend/:id" element={<FriendPage />} />
         <Route path="/profile/edit" element={<ProfileEditPage />} />
         <Route path="/password/edit" element={<PasswordEditPage />} />
+        <Route path="/verified" element={<VerifiedPage />} />
+        <Route path="/ticket" element={<TicketPage />} />
+      </Routes>
+      <Routes>
+        <Route path="/admin/dashboard" element={<DashboardPage />} />
+        <Route
+          path="/admin/usersmanagement"
+          element={<UsersManagementPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import moment from "moment/moment";
 import { api } from "../../api";
+import { config } from "../../config";
+import { useNavigate } from "react-router-dom";
 
 export default function Post({
   postId,
@@ -22,6 +24,7 @@ export default function Post({
   const [writeComment, setWriteComment] = useState("");
   const [editContent, setEditContent] = useState(content);
   const userRedux = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const deletePost = async (postId) => {
     let apipath = `post/${postId}`;
@@ -212,13 +215,20 @@ export default function Post({
                 width={36}
                 height={36}
                 className="rounded-full m-2"
-                src={`/images/${"female-profile.png"}`}
+                src={`${config.API_IMG_URL}/avatars/${user.avatar}`}
                 alt="profile-picture"
               />
             )}
 
             <div className="flex flex-col">
-              <p className="font-medium">
+              <p
+                className="font-medium"
+                onClick={() =>
+                  navigate(
+                    user.id !== userRedux.id ? `/friend/${user.id}` : `/profile`
+                  )
+                }
+              >
                 {user.name}{" "}
                 {user.verified !== 0 && (
                   <i className="bx bx-fw bxs-badge-check text-success"></i>
@@ -226,14 +236,17 @@ export default function Post({
               </p>
               <p className="text-xs">
                 {user.status_id !== null && user.status.status}{" "}
-                {user.major_id !== null && user.major.major} (
-                {user.major_id !== null && user.year_generation})
+                {user.major_id !== null && user.major.major}
+                {user.major_id !== null &&
+                  (user.status.status === "Mahasiswa" ||
+                    user.status.status === "Alumni") &&
+                  ` (${user.year_generation})`}
               </p>
             </div>
           </div>
         </div>
         {user.id === userRedux.id && (
-          <div className="dropdown dropdown-end">
+          <div className="dropdown dropdown-end z-10">
             <i className="bx bx-fw bx-dots-vertical-rounded" tabIndex={0}></i>
             <ul
               tabIndex={0}
@@ -273,7 +286,7 @@ export default function Post({
         >
           <div className="modal-box">
             <div className="flex flex-row justify-between items-center">
-              <p>Edit Komentar</p>
+              <p>Edit Caption Postingan</p>
               <label
                 htmlFor={`edit_post_${postId}`}
                 className="btn btn-sm btn-circle btn-ghost"
@@ -309,10 +322,8 @@ export default function Post({
       {image !== null ? (
         <div className="relative w-full h-0" style={{ paddingBottom: "100%" }}>
           <img
-            className="absolute top-0 left-0 rounded-lg object-cover w-full h-full"
-            src={
-              "https://pbs.twimg.com/profile_images/1273248642007089157/GPfXUOJf_400x400.jpg"
-            }
+            className="absolute z-0 top-0 left-0 rounded-lg object-cover w-full h-full"
+            src={`${config.API_IMG_URL}/posts/${image}`}
             alt="post-picture"
           />
         </div>
@@ -340,15 +351,17 @@ export default function Post({
             {comment.length}
           </label>
         </div>
-        <p className="text-xs mb-4">
-          {like.length} orang menyukai ini.{" "}
-          <label htmlFor={`modal_like_post_${postId}`}>
-            <span className="text-primary">Lihat disini</span>
-          </label>
-        </p>
+        {like.length > 0 && (
+          <p className="text-xs mb-4">
+            {like.length} orang menyukai ini.{" "}
+            <label htmlFor={`modal_like_post_${postId}`}>
+              <span className="text-primary">Lihat disini</span>
+            </label>
+          </p>
+        )}
         {image !== null && <p className="text-sm">{content}</p>}
         <p className="text-xs italic mt-4">
-          {moment(date).startOf("day").fromNow()} <br />
+          {moment(date).fromNow()} <br />
           {moment(date).format("LLLL")}
         </p>
       </div>
@@ -382,8 +395,8 @@ export default function Post({
                 onChange={(e) => setWriteComment(e.target.value)}
                 value={writeComment}
               ></textarea>
-              <div className="flex justify-between items-center">
-                <button className="btn btn-sm">Upload Gambar</button>
+              <div className="flex justify-end items-center">
+                {/* <button className="btn btn-sm">Upload Gambar</button> */}
                 <button
                   className="btn btn-sm btn-primary"
                   onClick={() => {
@@ -422,7 +435,7 @@ export default function Post({
                           <img
                             width={36}
                             className="rounded-full m-2"
-                            src={`/images/${"female-profile.png"}`}
+                            src={`${config.API_IMG_URL}/avatars/${userRedux.avatar}`}
                             alt="profile-picture"
                           />
                         )}
@@ -556,33 +569,35 @@ export default function Post({
                       key={item.id}
                       className="like flex flex-row justify-between items-center"
                     >
-                      <div className="flex flex-row items-center gap-4">
-                        <div className="w-10 avatar online">
-                          {item.user.avatar === null ? (
-                            <img
-                              tabIndex={0}
-                              className="rounded-full m-2"
-                              src={`/images/${
-                                item.user.gender === "Laki-laki"
-                                  ? "male-profile.png"
-                                  : "female-profile.png"
-                              }`}
-                              alt="profile-picture"
-                            />
-                          ) : (
-                            <img
-                              tabIndex={0}
-                              className="rounded-full m-2"
-                              src={`/images/${"female-profile.png"}`}
-                              alt="profile-picture"
-                            />
-                          )}
-                        </div>
+                      <div className="flex flex-row items-center">
+                        {item.user.avatar === null ? (
+                          <img
+                            width={40}
+                            tabIndex={0}
+                            className="rounded-full m-2"
+                            src={`/images/${
+                              item.user.gender === "Laki-laki"
+                                ? "male-profile.png"
+                                : "female-profile.png"
+                            }`}
+                            alt="profile-picture"
+                          />
+                        ) : (
+                          <img
+                            width={40}
+                            tabIndex={0}
+                            className="rounded-full m-2"
+                            src={`${config.API_IMG_URL}/avatars/${userRedux.avatar}`}
+                            alt="profile-picture"
+                          />
+                        )}
                         <div className="flex flex-col">
                           <p className="font-medium text-sm">
                             {item.user.name}
                           </p>
-                          <p className="text-xs">Jumat, 9 Juni 2023 07.30 AM</p>
+                          <p className="text-xs">
+                            {moment(item.created_at).format("LLLL")}
+                          </p>
                         </div>
                       </div>
                       <i className="bx bx-fw bxs-heart text-primary"></i>

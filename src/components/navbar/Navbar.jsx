@@ -14,9 +14,9 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbar bg-base-100 lg:px-40 px-6 border-b border-base-300 fixed z-10 top-0">
+    <div className="navbar bg-base-100 px-6 border-b border-base-300 fixed z-20 top-0">
       <div className="navbar-start gap-4">
-        <Link to="/home">
+        <Link to={user.role.level === 1 ? "/admin/dashboard" : "/home"}>
           <img src={"/images/uaa.png"} width={36} height={36} alt="logo" />
         </Link>
       </div>
@@ -45,23 +45,43 @@ export default function Navbar() {
             />
           )}
 
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <Link to="/profile">Profil Saya</Link>
-            </li>
-            <li>
-              <Link to="/profile/edit">Edit Profil</Link>
-            </li>
-            <li>
-              <Link to="/password/edit">Edit Password</Link>
-            </li>
-            <li>
-              <a onClick={() => handleLogout()}>Logout</a>
-            </li>
-          </ul>
+          {user.role.level === 1 ? (
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <Link to="/profile">Profil Admin</Link>
+              </li>
+              <li>
+                <Link to="/profile/edit">Edit Profil</Link>
+              </li>
+              <li>
+                <Link to="/password/edit">Edit Password</Link>
+              </li>
+              <li>
+                <a onClick={() => handleLogout()}>Logout</a>
+              </li>
+            </ul>
+          ) : (
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <Link to="/profile">Profil Saya</Link>
+              </li>
+              <li>
+                <Link to="/profile/edit">Edit Profil</Link>
+              </li>
+              <li>
+                <Link to="/password/edit">Edit Password</Link>
+              </li>
+              <li>
+                <a onClick={() => handleLogout()}>Logout</a>
+              </li>
+            </ul>
+          )}
         </div>
       </div>
     </div>

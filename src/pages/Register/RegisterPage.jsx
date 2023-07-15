@@ -25,9 +25,9 @@ export default function RegisterPage() {
       name: name,
       username: username,
       gender: gender,
-      major_id: major.id,
-      status_id: status.id,
-      year_generation: year,
+      major_id: major !== null ? major.id : null,
+      status_id: status !== null ? status.id : null,
+      year_generation: year !== "" ? year : null,
     };
     return await api.postApi
       .post(apipath, postdata)
@@ -171,28 +171,6 @@ export default function RegisterPage() {
             <div className="flex flex-row flex-wrap lg:flex-nowrap items-center gap-3">
               <div className="form-control w-full">
                 <label className="label">
-                  <span className="label-text">Jurusan/Prodi</span>
-                </label>
-                <select
-                  defaultValue={0}
-                  className="select select-bordered w-full"
-                  onChange={(e) => setMajor(JSON.parse(e.target.value))}
-                >
-                  <option disabled value={0}>
-                    Pilih jurusan ...
-                  </option>
-                  {majors.length > 0 &&
-                    majors.map((major) => {
-                      return (
-                        <option key={major.id} value={JSON.stringify(major)}>
-                          {major.major}
-                        </option>
-                      );
-                    })}
-                </select>
-              </div>
-              <div className="form-control w-full">
-                <label className="label">
                   <span className="label-text">Status</span>
                 </label>
                 <select
@@ -201,7 +179,7 @@ export default function RegisterPage() {
                   onChange={(e) => setStatus(JSON.parse(e.target.value))}
                 >
                   <option disabled value={0}>
-                    Pilih status ...
+                    Pilih status
                   </option>
                   {statuses.length > 0 &&
                     statuses.map((status) => {
@@ -213,28 +191,63 @@ export default function RegisterPage() {
                     })}
                 </select>
               </div>
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text">Angkatan</span>
-                </label>
-                <select
-                  defaultValue={0}
-                  className="select select-bordered w-full"
-                  onChange={(e) => setYear(e.target.value)}
-                >
-                  <option disabled value={0}>
-                    Pilih angkatan ...
-                  </option>
-                  <option value={"2015"}>2015</option>
-                  <option value={"2016"}>2016</option>
-                  <option value={"2017"}>2017</option>
-                  <option value={"2018"}>2018</option>
-                  <option value={"2019"}>2019</option>
-                  <option value={"2020"}>2015</option>
-                  <option value={"2021"}>2021</option>
-                  <option value={"2022"}>2022</option>
-                </select>
-              </div>
+              {status !== null &&
+                (status.status === "Mahasiswa" ||
+                  status.status === "Alumni" ||
+                  status.status === "Dosen") && (
+                  <div className="form-control w-full">
+                    <label className="label">
+                      <span className="label-text">Jurusan/Prodi</span>
+                    </label>
+                    <select
+                      defaultValue={0}
+                      className="select select-bordered w-full"
+                      onChange={(e) => setMajor(JSON.parse(e.target.value))}
+                    >
+                      <option disabled value={0}>
+                        Pilih prodi
+                      </option>
+                      {majors.length > 0 &&
+                        majors.map((major) => {
+                          return (
+                            <option
+                              key={major.id}
+                              value={JSON.stringify(major)}
+                            >
+                              {major.major}
+                            </option>
+                          );
+                        })}
+                    </select>
+                  </div>
+                )}
+
+              {status !== null &&
+                (status.status === "Mahasiswa" ||
+                  status.status === "Alumni") && (
+                  <div className="form-control w-full">
+                    <label className="label">
+                      <span className="label-text">Angkatan</span>
+                    </label>
+                    <select
+                      defaultValue={0}
+                      className="select select-bordered w-full"
+                      onChange={(e) => setYear(e.target.value)}
+                    >
+                      <option disabled value={0}>
+                        Pilih angkatan ...
+                      </option>
+                      <option value={2015}>2015</option>
+                      <option value={2016}>2016</option>
+                      <option value={2017}>2017</option>
+                      <option value={2018}>2018</option>
+                      <option value={2019}>2019</option>
+                      <option value={2020}>2020</option>
+                      <option value={2021}>2021</option>
+                      <option value={2022}>2022</option>
+                    </select>
+                  </div>
+                )}
             </div>
           </form>
           <div className="flex flex-row justify-end items-center gap-3 mt-6">

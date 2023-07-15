@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Post from "../../components/post/Post";
 import Navbar from "../../components/navbar/Navbar";
 import { useSelector } from "react-redux";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 import { config } from "../../config";
@@ -13,8 +13,11 @@ export default function ProfilePage() {
   const [friends, setFriends] = useState([]);
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
   const [countLikes, setCountLikes] = useState(0);
   const [likeFromMe, setLikeFromMe] = useState();
+
+  const inputFileRef = useRef(null);
 
   const getFriends = useCallback(async () => {
     let apipath = `friendships/${user.id}`;
@@ -61,22 +64,20 @@ export default function ProfilePage() {
     }
   };
 
-  const sayHello = () => {
-    toast.success("SAY HELLO");
-  };
-
   const addPost = async () => {
     let apipath = `post`;
-    let postdata = {
-      user_id: user.id,
-      content: content,
-    };
-    return await api.postApi
-      .post(apipath, postdata)
+    let formData = new FormData();
+    formData.append("user_id", user.id);
+    formData.append("content", content);
+    formData.append("image", image);
+
+    return await api.postFileApi
+      .post(apipath, formData)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
           setContent("");
+          setImage(null);
           toast.success(resp.message);
           getPosts();
         }
@@ -86,26 +87,29 @@ export default function ProfilePage() {
       });
   };
 
-  // const delPost = async (postId) => {
-  //   let apipath = `post/${postId}`;
-  //   return await api.delApi
-  //     .delete(apipath)
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         let resp = response.data;
-  //         getPosts();
-  //         toast.success(resp.message);
-  //       }
-  //     })
-  //     .catch(() => {
-  //       toast.error("Ada kesalahan teknis, silahkan coba lagi");
-  //     });
-  // };
+  const deleteFriend = async (friendId) => {
+    let apipath = `friendship/${friendId}`;
+    return await api.delApi
+      .delete(apipath)
+      .then((response) => {
+        if (response.status === 200) {
+          let resp = response.data;
+          toast.success(resp.message);
+          getFriends();
+          getPosts();
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan coba lagi");
+      });
+  };
 
   useEffect(() => {
     getFriends();
     getPosts();
   }, []);
+
+  console.log(image);
 
   return (
     <div className="page-content">
@@ -182,9 +186,12 @@ export default function ProfilePage() {
                 )}
               </h1>
               <p className="text-xs">
-                {user.status && user.status !== null && user.status.status}{" "}
-                {user.major && user.major !== null && user.major.major} (
-                {user.major && user.major !== null && user.year_generation})
+                {user.status_id !== null && user.status.status}{" "}
+                {user.major_id !== null && user.major.major}
+                {user.major_id !== null &&
+                  (user.status.status === "Mahasiswa" ||
+                    user.status.status === "Alumni") &&
+                  ` (${user.year_generation})`}
               </p>
               <div className="flex flex-row justify-start items-center gap-2 mt-2">
                 <p className="text-xs">
@@ -198,9 +205,7 @@ export default function ProfilePage() {
                 </p>
               </div>
               <p className="text-xs mt-2">
-                <span className="font-bold">Bio:</span> Lorem ipsum dolor sit
-                amet consectetur, adipisicing elit. Libero ad sint enim sapiente
-                voluptas impedit excepturi odit cupiditate voluptatum similique.
+                <span className="font-bold">Bio:</span> {user.bio}
               </p>
               <div className="flex flex-row items-center gap-1 mt-2">
                 <button
@@ -225,7 +230,20 @@ export default function ProfilePage() {
               value={content}
             ></textarea>
             <div className="flex justify-between items-center">
-              <button className="btn btn-sm">Upload Gambar</button>
+              <button
+                className="btn btn-sm"
+                onClick={() => inputFileRef.current.click()}
+              >
+                Upload Gambar
+              </button>
+              <input
+                type="file"
+                ref={inputFileRef}
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  setImage(e.target.files[0]);
+                }}
+              />
               <button
                 className="btn btn-sm btn-primary"
                 onClick={() => addPost()}
@@ -234,6 +252,25 @@ export default function ProfilePage() {
               </button>
             </div>
           </div>
+
+          {image !== null && (
+            <div className="indicator">
+              <span
+                className="indicator-item rounded-full pl-1 bg-primary-content"
+                onClick={() => setImage(null)}
+              >
+                <i className="bx bx-fw bx-x text-primary"></i>
+              </span>
+              <img
+                className="rounded-md mb-5"
+                width={100}
+                height={100}
+                src={URL.createObjectURL(image)}
+                alt="profile-picture"
+              />
+            </div>
+          )}
+
           <div className="list-post flex flex-col gap-3">
             {posts ? (
               posts.map((post, index) => {
@@ -249,7 +286,6 @@ export default function ProfilePage() {
                     date={post.created_at}
                     likeFromMe={likeFromMe[index]}
                     getPosts={getPosts}
-                    sayHello={sayHello}
                   />
                 );
               })
@@ -265,7 +301,7 @@ export default function ProfilePage() {
         >
           <form method="dialog" className="modal-box h-full">
             <div className="flex flex-row justify-between items-center">
-              <p>Total Teman (5)</p>
+              <p>Total Teman ({friends.length})</p>
               <button
                 htmlFor="my-modal-3"
                 className="btn btn-sm btn-circle btn-ghost"
@@ -315,12 +351,19 @@ export default function ProfilePage() {
                             )}
                           </p>
                           <p className="text-xs">
-                            {friend.status !== null && friend.status.status}{" "}
-                            {friend.major !== null && friend.major.major}
+                            {friend.status_id !== null && friend.status.status}{" "}
+                            {friend.major_id !== null && friend.major.major}
+                            {friend.major_id !== null &&
+                              (friend.status.status === "Mahasiswa" ||
+                                friend.status.status === "Alumni") &&
+                              ` (${friend.year_generation})`}
                           </p>
                         </div>
                       </div>
-                      <i className="bx bx-fw bx-trash text-error"></i>
+                      <i
+                        className="bx bx-fw bx-trash text-error"
+                        onClick={() => deleteFriend(friend.id)}
+                      ></i>
                     </div>
                   </div>
                 );

@@ -69,8 +69,8 @@ export default function ProfileEditPage() {
     formData.append("phone", phone);
     formData.append("bio", bio);
     formData.append("gender", gender);
-    formData.append("major_id", major);
-    formData.append("status_id", status);
+    formData.append("major_id", parseInt(major));
+    formData.append("status_id", parseInt(status));
     formData.append("year_generation", year);
     formData.append("avatar", avatar !== null ? avatar : null);
     formData.append("cover", cover !== null ? cover : null);
@@ -80,7 +80,7 @@ export default function ProfileEditPage() {
         if (response.status === 201) {
           let { message, user } = response.data;
           dispatch(setUser({ user }));
-          toast.success(message);
+          toast.success({ message });
           navigate("/profile");
         } else {
           toast.error("Terjadi kesalahan, coba ulangi");
@@ -95,6 +95,8 @@ export default function ProfileEditPage() {
     getMajors();
     getStatuses();
   }, []);
+
+  console.log(avatar);
 
   return (
     <div className="page-content">

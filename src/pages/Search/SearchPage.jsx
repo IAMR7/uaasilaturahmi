@@ -4,12 +4,15 @@ import BottomNav from "../../components/bottomnav/BottomNav";
 import Navbar from "../../components/navbar/Navbar";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { config } from "../../config";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useState("");
   const [users, setUsers] = useState();
   const user = useSelector((state) => state.user);
   const [friends, setFriends] = useState([]);
+  const navigate = useNavigate();
 
   const searchUser = async (params) => {
     let apipath = `user/search?search=${params}`;
@@ -19,7 +22,7 @@ export default function SearchPage() {
         if (response.status === 200) {
           let resp = response.data;
           let check = resp.filter((dt) => {
-            return dt.id !== user.id;
+            return dt.id !== user.id && dt.role.role !== "Admin";
           });
           getFriends();
           setUsers(check);
@@ -117,15 +120,14 @@ export default function SearchPage() {
                     className="menu rounded-lg border border-base-300 px-4 py-4"
                   >
                     <div className="flex flex-row justify-between items-center">
-                      <div className="flex flex-row gap-3 items-center">
+                      <div className="flex flex-row items-center">
                         {user.avatar === null ? (
                           <img
                             width={40}
-                            height={40}
                             tabIndex={0}
-                            className="rounded-full"
+                            className="rounded-full m-2"
                             src={`/images/${
-                              user.gender === "Pria"
+                              user.gender === "Laki-laki"
                                 ? "male-profile.png"
                                 : "female-profile.png"
                             }`}
@@ -134,21 +136,26 @@ export default function SearchPage() {
                         ) : (
                           <img
                             width={40}
-                            height={40}
                             tabIndex={0}
-                            className="rounded-full"
-                            src={`/images/${"female-profile.png"}`}
+                            className="rounded-full m-2"
+                            src={`${config.API_IMG_URL}/avatars/${user.avatar}`}
                             alt="profile-picture"
                           />
                         )}
                         <div className="flex flex-col">
-                          <p className="font-semibold">{user.name}</p>
-                          <p className="text-sm">
-                            {user.status_id !== null &&
-                            user.status.status !== "Mahasiswa"
-                              ? user.status.status
-                              : ""}{" "}
+                          <p
+                            className="font-semibold"
+                            onClick={() => navigate(`/friend/${user.id}`)}
+                          >
+                            {user.name}
+                          </p>
+                          <p className="text-xs">
+                            {user.status_id !== null && user.status.status}{" "}
                             {user.major_id !== null && user.major.major}
+                            {user.major_id !== null &&
+                              (user.status.status === "Mahasiswa" ||
+                                user.status.status === "Alumni") &&
+                              ` (${user.year_generation})`}
                           </p>
                         </div>
                       </div>
@@ -158,7 +165,7 @@ export default function SearchPage() {
                           className="btn btn-sm"
                           onClick={() => handleAddfriend(user.id)}
                         >
-                          <i className="bx bx-fw bx-plus"></i>
+                          Tambah
                         </button>
                       )}
                     </div>

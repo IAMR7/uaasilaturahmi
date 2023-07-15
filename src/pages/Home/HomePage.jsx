@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import Navbar from "../../components/navbar/Navbar";
 import Post from "../../components/post/Post";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 import BottomNav from "../../components/bottomnav/BottomNav";
@@ -9,7 +9,10 @@ import BottomNav from "../../components/bottomnav/BottomNav";
 export default function HomePage() {
   const user = useSelector((state) => state.user);
   const [posts, setPosts] = useState();
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
   const [likeFromMe, setLikeFromMe] = useState();
+  const inputFileRef = useRef(null);
 
   const getAllPosts = async () => {
     let apipath = `posts/all/${user.id}`;
@@ -29,6 +32,29 @@ export default function HomePage() {
       toast.error("Ada kesalahan teknis, silahkan coba lagi");
       console.log(error);
     }
+  };
+
+  const addPost = async () => {
+    let apipath = `post`;
+    let formData = new FormData();
+    formData.append("user_id", user.id);
+    formData.append("content", content);
+    formData.append("image", image);
+
+    return await api.postFileApi
+      .post(apipath, formData)
+      .then((response) => {
+        if (response.status === 201) {
+          let resp = response.data;
+          setContent("");
+          setImage(null);
+          toast.success(resp.message);
+          getAllPosts();
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan coba lagi");
+      });
   };
 
   useEffect(() => {
@@ -59,12 +85,49 @@ export default function HomePage() {
             <textarea
               placeholder="Tulis sesuatu untuk diceritakan ..."
               className="textarea textarea-bordered textarea-md w-full font-sm"
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
             ></textarea>
             <div className="flex justify-between items-center">
-              <button className="btn btn-sm">Upload Gambar</button>
-              <button className="btn btn-sm btn-primary">Posting</button>
+              <button
+                className="btn btn-sm"
+                onClick={() => inputFileRef.current.click()}
+              >
+                Upload Gambar
+              </button>
+              <input
+                type="file"
+                ref={inputFileRef}
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  setImage(e.target.files[0]);
+                }}
+              />
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => addPost()}
+              >
+                Posting
+              </button>
             </div>
           </div>
+          {image !== null && (
+            <div className="indicator">
+              <span
+                className="indicator-item rounded-full pl-1 bg-primary-content"
+                onClick={() => setImage(null)}
+              >
+                <i className="bx bx-fw bx-x text-primary"></i>
+              </span>
+              <img
+                className="rounded-md mb-5"
+                width={100}
+                height={100}
+                src={URL.createObjectURL(image)}
+                alt="profile-picture"
+              />
+            </div>
+          )}
           <div className="list-post flex flex-col gap-3">
             {posts ? (
               posts.map((post, index) => {

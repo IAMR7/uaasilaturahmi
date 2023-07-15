@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 export default function BottomNav() {
   return (
-    <div className="btm-nav">
+    <div className="btm-nav z-20">
       <NavLink
         to={"/home"}
         className={({ isActive, isPending }) =>

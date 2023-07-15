@@ -1,12 +1,7 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  clearUser,
-  fetchUser,
-  setToken,
-  setUser,
-} from "../../redux/slices/userSlice";
+import { clearUser, setToken, setUser } from "../../redux/slices/userSlice";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
 
   const [email, setEmail] = useState();
   const [password, setpassword] = useState();
@@ -30,20 +24,22 @@ export default function LoginPage() {
       .then((response) => {
         if (response.status === 200) {
           let { user, token } = response.data;
+          dispatch(setToken({ token }));
           dispatch(setUser({ user }));
-          dispatch(setToken(token));
           toast.success("Yeay! kamu berhasil login");
-          navigate("/home");
+          if (user.role.level === 1) {
+            navigate("/admin/dashboard");
+          } else if (user.role.level === 2) {
+            navigate("/home");
+          }
         } else {
-          toast.error("Email atau password salah!");
+          toast.error("Email atau password!");
         }
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
-  console.log(user);
 
   return (
     <div className="hero min-h-screen bg-base-200">

@@ -4,6 +4,7 @@ import Navbar from "../../components/navbar/Navbar";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { api } from "../../api";
+import { config } from "../../config";
 
 export default function NotificationsPage() {
   const user = useSelector((state) => state.user);
@@ -63,11 +64,11 @@ export default function NotificationsPage() {
         theme="colored"
       />
       <div className="min-h-screen mt-16 xl:px-72 lg:px-64 px-4 py-6 w-full mb-10">
-        <p className="text-md font-bold mb-4">
+        <p className="text-lg font-bold mb-4">
           Notifikasi ({notifAccFriends?.length})
         </p>
         <div className="mb-6">
-          {notifAccFriends?.length > 0 &&
+          {notifAccFriends?.length > 0 ? (
             notifAccFriends.map((notif) => {
               return (
                 <div
@@ -80,7 +81,7 @@ export default function NotificationsPage() {
                         width={36}
                         className="rounded-full m-2"
                         src={`/images/${
-                          notif.user.gender === "Pria"
+                          notif.user.gender === "Laki-laki"
                             ? "male-profile.png"
                             : "female-profile.png"
                         }`}
@@ -90,14 +91,16 @@ export default function NotificationsPage() {
                       <img
                         width={36}
                         className="rounded-full m-2"
-                        src={`/images/${"female-profile.png"}`}
+                        src={`${config.API_IMG_URL}/avatars/${notif.user.avatar}`}
                         alt="profile-picture"
                       />
                     )}
                     <div className="flex flex-col">
                       <p className="font-medium">
-                        {notif.user.name}
-                        <i className="bx bx-fw bxs-badge-check text-success"></i>
+                        {notif.user.name}{" "}
+                        {notif.user.verified !== 0 && (
+                          <i className="bx bx-fw bxs-badge-check text-success"></i>
+                        )}
                       </p>
                       <p className="text-xs">Meminta pertemanan dengan anda</p>
                     </div>
@@ -112,7 +115,13 @@ export default function NotificationsPage() {
                   </button>
                 </div>
               );
-            })}
+            })
+          ) : (
+            <div className="mt-32 flex flex-col gap-3 tect-center items-center">
+              <img src="images/noresult.svg" alt="" />
+              <p className="text-xl font-bold">Tidak ada notifikasi baru</p>
+            </div>
+          )}
         </div>
       </div>
       <BottomNav />
