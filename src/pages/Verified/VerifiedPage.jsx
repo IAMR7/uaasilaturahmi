@@ -11,11 +11,17 @@ export default function VerifiedPage() {
   const [note, setNote] = useState("");
   const [check, setCheck] = useState([]);
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const checkUser = async () => {
     let apipath = `request/verified/user/${user.id}`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -36,7 +42,7 @@ export default function VerifiedPage() {
     formData.append("note", note);
     formData.append("user_id", user.id);
     return await api.postFileApi
-      .post(apipath, formData)
+      .post(apipath, formData, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
@@ -75,7 +81,7 @@ export default function VerifiedPage() {
       <div className="min-h-screen mt-16 xl:px-72 lg:px-64 px-4 py-6 w-full mb-10">
         {check.length > 0 ? (
           <div className="flex flex-col gap-3 text-center items-center mt-12">
-            <img src="images/ilusverified.svg" alt="" />
+            <img src="images/noresult.svg" alt="" />
             <h1 className="text-xl font-bold text-neutral">
               Permintaanmu akan segera diproses oleh Admin, Silahkan ditunggu
             </h1>

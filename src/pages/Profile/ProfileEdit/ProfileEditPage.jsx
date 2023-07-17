@@ -10,6 +10,7 @@ import { config } from "../../../config";
 export default function ProfileEditPage() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [username, setUsername] = useState(user.username);
@@ -26,10 +27,16 @@ export default function ProfileEditPage() {
 
   const dispatch = useDispatch();
 
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
+
   const getMajors = async () => {
     let apipath = `majors`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -46,7 +53,7 @@ export default function ProfileEditPage() {
   const getStatuses = async () => {
     let apipath = `statuses`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -75,7 +82,7 @@ export default function ProfileEditPage() {
     formData.append("avatar", avatar !== null ? avatar : null);
     formData.append("cover", cover !== null ? cover : null);
     return await api.putFileApi
-      .post(apipath, formData)
+      .post(apipath, formData, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let { message, user } = response.data;
@@ -95,8 +102,6 @@ export default function ProfileEditPage() {
     getMajors();
     getStatuses();
   }, []);
-
-  console.log(avatar);
 
   return (
     <div className="page-content">

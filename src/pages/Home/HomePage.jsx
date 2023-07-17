@@ -8,16 +8,22 @@ import BottomNav from "../../components/bottomnav/BottomNav";
 
 export default function HomePage() {
   const user = useSelector((state) => state.user);
+
   const [posts, setPosts] = useState();
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [likeFromMe, setLikeFromMe] = useState();
   const inputFileRef = useRef(null);
-
+  const token = useSelector((state) => state.token);
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
   const getAllPosts = async () => {
     let apipath = `posts/all/${user.id}`;
     try {
-      const response = await api.getApi.get(apipath);
+      const response = await api.getApi.get(apipath, apiheader);
       if (response.status === 200) {
         let resp = response.data;
         let getlike = resp.map((post) => {
@@ -42,7 +48,7 @@ export default function HomePage() {
     formData.append("image", image);
 
     return await api.postFileApi
-      .post(apipath, formData)
+      .post(apipath, formData, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;

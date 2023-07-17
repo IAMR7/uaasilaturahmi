@@ -24,12 +24,18 @@ export default function Post({
   const [writeComment, setWriteComment] = useState("");
   const [editContent, setEditContent] = useState(content);
   const userRedux = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const navigate = useNavigate();
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const deletePost = async (postId) => {
     let apipath = `post/${postId}`;
     return await api.delApi
-      .delete(apipath)
+      .delete(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -55,7 +61,7 @@ export default function Post({
       image: image,
     };
     return await api.putApi
-      .put(apipath, postdata)
+      .put(apipath, postdata, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
@@ -79,7 +85,7 @@ export default function Post({
       post_id: idpost,
     };
     try {
-      const response = await api.postApi.post(apipath, postdata);
+      const response = await api.postApi.post(apipath, postdata, apiheader);
       if (response.status === 201) {
         if (typeof getPosts === "function") {
           getPosts();
@@ -96,7 +102,7 @@ export default function Post({
   const unlikePost = async (likeId) => {
     let apipath = `like/${likeId}`;
     try {
-      const response = await api.delApi.delete(apipath);
+      const response = await api.delApi.delete(apipath, apiheader);
       if (response.status === 200) {
         if (typeof getPosts === "function") {
           getPosts();
@@ -118,7 +124,7 @@ export default function Post({
       image: null,
     };
     return await api.postApi
-      .post(apipath, postdata)
+      .post(apipath, postdata, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
@@ -144,7 +150,7 @@ export default function Post({
       image: null,
     };
     return await api.putApi
-      .put(apipath, postdata)
+      .put(apipath, postdata, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
@@ -164,7 +170,7 @@ export default function Post({
   const deleteComment = async (commentId) => {
     let apipath = `comment/${commentId}`;
     return await api.delApi
-      .delete(apipath)
+      .delete(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -441,7 +447,10 @@ export default function Post({
                         )}
                         <div className="flex flex-col">
                           <p className="font-medium text-sm">
-                            {item.user.name}
+                            {item.user.name}{" "}
+                            {item.user.verified === 1 && (
+                              <i className="bx bx-fw bxs-badge-check text-success"></i>
+                            )}
                           </p>
                           <p className="text-xs">{item.content}</p>
                         </div>
@@ -593,7 +602,10 @@ export default function Post({
                         )}
                         <div className="flex flex-col">
                           <p className="font-medium text-sm">
-                            {item.user.name}
+                            {item.user.name}{" "}
+                            {item.user.verified === 1 && (
+                              <i className="bx bx-fw bxs-badge-check text-success"></i>
+                            )}
                           </p>
                           <p className="text-xs">
                             {moment(item.created_at).format("LLLL")}

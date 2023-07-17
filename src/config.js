@@ -1,6 +1,7 @@
 const app_version = "1.0";
-const api_url = "http://127.0.0.1:8000/api";
-const api_img_url = "http://127.0.0.1:8000/storage/uploads/";
+const api_url = "https://api-uaa-silaturahmi.akademi.my.id/api";
+const api_img_url =
+  "https://api-uaa-silaturahmi.akademi.my.id/storage/uploads/";
 
 export const config = {
   APP_VERSION: app_version,

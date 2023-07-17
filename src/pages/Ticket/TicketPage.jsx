@@ -10,6 +10,12 @@ export default function TicketPage() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const addTicket = async () => {
     let apipath = `ticket/add`;
@@ -20,7 +26,7 @@ export default function TicketPage() {
       user_id: user.id,
     };
     return await api.postApi
-      .post(apipath, postData)
+      .post(apipath, postData, apiheader)
       .then((response) => {
         if (response.status === 201) {
           toast.success("Pesan berhasil terkirim, terimakasih atas laporannya");

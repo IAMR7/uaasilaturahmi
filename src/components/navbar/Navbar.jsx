@@ -17,7 +17,13 @@ export default function Navbar() {
     <div className="navbar bg-base-100 px-6 border-b border-base-300 fixed z-20 top-0">
       <div className="navbar-start gap-4">
         <Link to={user.role.level === 1 ? "/admin/dashboard" : "/home"}>
-          <img src={"/images/uaa.png"} width={36} height={36} alt="logo" />
+          <div className="flex flex-row items-center gap-1">
+            <img
+              className="w-28"
+              src={"/images/text-studentgram.png"}
+              alt="logo"
+            />
+          </div>
         </Link>
       </div>
 

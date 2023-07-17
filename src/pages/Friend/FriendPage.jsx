@@ -19,12 +19,19 @@ export default function FriendPage() {
   const [checkMe, setCheckMe] = useState();
   const [checkMeforDelete, setCheckMeForDelete] = useState();
   const userRedux = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const navigate = useNavigate();
+
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const getUser = async () => {
     let apipath = `user/${parseInt(parse)}`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -39,7 +46,7 @@ export default function FriendPage() {
   const getFriends = useCallback(async () => {
     let apipath = `friendships/${parseInt(parse)}`;
     try {
-      const response = await api.getApi.get(apipath);
+      const response = await api.getApi.get(apipath, apiheader);
       if (response.status === 200) {
         let resp = response.data;
         let friends = [];
@@ -75,7 +82,7 @@ export default function FriendPage() {
       status: "Menunggu Konfirmasi",
     };
     return await api.postApi
-      .post(apipath, postData)
+      .post(apipath, postData, apiheader)
       .then((response) => {
         if (response.status === 201) {
           getFriends();
@@ -92,7 +99,7 @@ export default function FriendPage() {
   const deleteFriend = async (friendshipId) => {
     let apipath = `friendship/${friendshipId}`;
     try {
-      const response = await api.delApi.delete(apipath);
+      const response = await api.delApi.delete(apipath, apiheader);
       if (response.status === 200) {
         let resp = response.data;
         toast.success(resp.message);
@@ -108,7 +115,7 @@ export default function FriendPage() {
   const getPosts = async () => {
     let apipath = `posts/${parseInt(parse)}`;
     try {
-      const response = await api.getApi.get(apipath);
+      const response = await api.getApi.get(apipath, apiheader);
       if (response.status === 200) {
         let resp = response.data;
         let getlike = resp.map((post) => {
@@ -328,7 +335,7 @@ export default function FriendPage() {
                           <p className="font-medium">
                             {friend.name}{" "}
                             {friend.verified === 1 && (
-                              <i className="bx bx-fw bx-badge-check text-primary"></i>
+                              <i className="bx bx-fw bxs-badge-check text-success"></i>
                             )}
                           </p>
                           <p className="text-xs">

@@ -4,17 +4,24 @@ import Sidebar from "../../../components/sidebar/Sidebar";
 import { useEffect, useState } from "react";
 import { api } from "../../../api";
 import { config } from "../../../config";
+import { useSelector } from "react-redux";
 
 export default function DashboardPage() {
   const [users, setUsers] = useState([]);
   const [requestVerifieds, setRequestVerifieds] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [posts, setPosts] = useState([]);
+  const token = useSelector((state) => state.token);
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const getUsers = async () => {
     let apipath = `admin/users`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -29,7 +36,7 @@ export default function DashboardPage() {
   const getRequestVerifieds = async () => {
     let apipath = `request/verifieds`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -44,7 +51,7 @@ export default function DashboardPage() {
   const getTickets = async () => {
     let apipath = `tickets`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -59,7 +66,7 @@ export default function DashboardPage() {
   const getPosts = async () => {
     let apipath = `posts`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -215,7 +222,7 @@ export default function DashboardPage() {
                                       (user.status.status === "Mahasiswa" ||
                                         user.status.status === "Alumni") && (
                                         <div className="badge badge-ghost">
-                                          2018
+                                          {user.year_generation}
                                         </div>
                                       )}
                                   </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { clearUser, setToken, setUser } from "../../redux/slices/userSlice";
+import { setToken, setUser } from "../../redux/slices/userSlice";
 import { api } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -57,21 +57,16 @@ export default function LoginPage() {
       />
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center lg:text-left lg:px-40">
-          <h1 className="text-5xl font-bold">Silaturahmi Bersama!</h1>
-          <p className="py-6">
-            Ciptakan silaturahmi dalam keluarga Civitas Akademika Universitas
-            Alma Ata dengan cara yang hangat dan menyenangkan
+          <h1 className="text-5xl font-bold">Terhubung Bersama!</h1>
+          <p className="py-6 text-lg">
+            Sebarkan cerita menarikmu kepada teman-teman sekitarmu dan terhubung
+            dengan mereka untuk saling berbagi keseruan lainnya
           </p>
         </div>
         <div className="card flex-shrink-0 w-full max-w-sm shadow-sm bg-base-100">
           <div className="card-body">
             <div className="flex flex-row justify-center items-center">
-              <img
-                src="/images/uaa.png"
-                alt=""
-                width={86}
-                onClick={() => dispatch(clearUser())}
-              />
+              <img src="/images/text-studentgram.png" alt="" className="w-36" />
             </div>
             <form>
               <div className="form-control">
@@ -96,11 +91,6 @@ export default function LoginPage() {
                   autoComplete="password"
                   onChange={(e) => setpassword(e.target.value)}
                 />
-                <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
-                    Forgot password?
-                  </a>
-                </label>
               </div>
             </form>
             <div className="form-control mt-6">

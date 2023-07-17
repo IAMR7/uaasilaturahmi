@@ -7,10 +7,10 @@ export default function BottomNav() {
         to={"/home"}
         className={({ isActive, isPending }) =>
           isPending
-            ? "text-secondary"
+            ? "text-base-content"
             : isActive
             ? "active text-primary"
-            : "text-secondary"
+            : "text-base-content"
         }
       >
         <i className="bx bx-fw bx-home"></i>
@@ -20,10 +20,10 @@ export default function BottomNav() {
         to={"/search"}
         className={({ isActive, isPending }) =>
           isPending
-            ? "text-secondary"
+            ? "text-base-content"
             : isActive
             ? "active text-primary"
-            : "text-secondary"
+            : "text-base-content"
         }
       >
         <i className="bx bx-fw bx-search"></i>
@@ -33,10 +33,10 @@ export default function BottomNav() {
         to={"/friends"}
         className={({ isActive, isPending }) =>
           isPending
-            ? "text-secondary"
+            ? "text-base-content"
             : isActive
             ? "active text-primary"
-            : "text-secondary"
+            : "text-base-content"
         }
       >
         <i className="bx bx-fw bx-group"></i>
@@ -46,10 +46,10 @@ export default function BottomNav() {
         to={"/notifications"}
         className={({ isActive, isPending }) =>
           isPending
-            ? "text-secondary"
+            ? "text-base-content"
             : isActive
             ? "active text-primary"
-            : "text-secondary"
+            : "text-base-content"
         }
       >
         <i className="bx bx-fw bx-bell"></i>
@@ -59,10 +59,10 @@ export default function BottomNav() {
         to={"/me"}
         className={({ isActive, isPending }) =>
           isPending
-            ? "text-secondary"
+            ? "text-base-content"
             : isActive
             ? "active text-primary"
-            : "text-secondary"
+            : "text-base-content"
         }
       >
         <i className="bx bx-fw bx-user"></i>

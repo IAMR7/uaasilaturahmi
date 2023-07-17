@@ -10,6 +10,7 @@ import { config } from "../../config";
 export default function ProfilePage() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const [friends, setFriends] = useState([]);
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState("");
@@ -19,10 +20,16 @@ export default function ProfilePage() {
 
   const inputFileRef = useRef(null);
 
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
+
   const getFriends = useCallback(async () => {
     let apipath = `friendships/${user.id}`;
     try {
-      const response = await api.getApi.get(apipath);
+      const response = await api.getApi.get(apipath, apiheader);
       if (response.status === 200) {
         let resp = response.data;
         let friends = [];
@@ -43,7 +50,7 @@ export default function ProfilePage() {
   const getPosts = async () => {
     let apipath = `posts/${user.id}`;
     try {
-      const response = await api.getApi.get(apipath);
+      const response = await api.getApi.get(apipath, apiheader);
       if (response.status === 200) {
         let resp = response.data;
         let getlike = resp.map((post) => {
@@ -72,7 +79,7 @@ export default function ProfilePage() {
     formData.append("image", image);
 
     return await api.postFileApi
-      .post(apipath, formData)
+      .post(apipath, formData, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
@@ -90,7 +97,7 @@ export default function ProfilePage() {
   const deleteFriend = async (friendId) => {
     let apipath = `friendship/${friendId}`;
     return await api.delApi
-      .delete(apipath)
+      .delete(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -108,8 +115,6 @@ export default function ProfilePage() {
     getFriends();
     getPosts();
   }, []);
-
-  console.log(image);
 
   return (
     <div className="page-content">
@@ -347,7 +352,7 @@ export default function ProfilePage() {
                           <p className="font-medium">
                             {friend.name}{" "}
                             {friend.verified === 1 && (
-                              <i className="bx bx-fw bx-badge-check text-primary"></i>
+                              <i className="bx bx-fw bxs-badge-check text-success"></i>
                             )}
                           </p>
                           <p className="text-xs">

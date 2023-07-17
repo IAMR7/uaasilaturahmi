@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { api } from "../../api";
 import BottomNav from "../../components/bottomnav/BottomNav";
 import Navbar from "../../components/navbar/Navbar";
@@ -11,13 +11,19 @@ export default function SearchPage() {
   const [searchParams, setSearchParams] = useState("");
   const [users, setUsers] = useState();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const [friends, setFriends] = useState([]);
   const navigate = useNavigate();
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const searchUser = async (params) => {
-    let apipath = `user/search?search=${params}`;
+    let apipath = `users/search?search=${params}`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -41,7 +47,7 @@ export default function SearchPage() {
       status: "Menunggu Konfirmasi",
     };
     return await api.postApi
-      .post(apipath, postdata)
+      .post(apipath, postdata, apiheader)
       .then((response) => {
         if (response.status === 201) {
           let resp = response.data;
@@ -54,26 +60,28 @@ export default function SearchPage() {
       });
   };
 
-  const getFriends = useCallback(async () => {
+  const getFriends = async () => {
     let apipath = `friendships/${user.id}`;
-    try {
-      const response = await api.getApi.get(apipath);
-      if (response.status === 200) {
-        let resp = response.data;
-        let friends = [];
-        resp.map((friend) => {
-          if (friend.user.id !== user.id) {
-            friends.push(friend.user);
-          } else {
-            friends.push(friend.friend_user);
-          }
-        });
-        setFriends(friends);
-      }
-    } catch {
-      toast.error("Ada kesalahan teknis, silahkan refresh ulang");
-    }
-  }, [user.id]);
+    return await api.getApi
+      .get(apipath, apiheader)
+      .then((response) => {
+        if (response.status === 200) {
+          let resp = response.data;
+          let friends = [];
+          resp.map((friend) => {
+            if (friend.user.id !== user.id) {
+              friends.push(friend.user);
+            } else {
+              friends.push(friend.friend_user);
+            }
+          });
+          setFriends(friends);
+        }
+      })
+      .catch(() => {
+        toast.error("Ada kesalahan teknis, silahkan refresh ulang");
+      });
+  };
 
   return (
     <div className="page-content">
@@ -109,9 +117,7 @@ export default function SearchPage() {
         </div>
         {users && users.length > 0 && (
           <div className="result">
-            <p className="text-lg font-bold">
-              Teman Ditemukan ({users.length})
-            </p>
+            <p className="text-lg font-bold">Ditemukan ({users.length})</p>
             <div className="list-user mt-4 flex flex-col gap-3">
               {users.map((user) => {
                 return (

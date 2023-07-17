@@ -8,12 +8,18 @@ import { config } from "../../config";
 
 export default function NotificationsPage() {
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const [notifAccFriends, setNotifAccFriends] = useState([]);
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const getNotifAccFriends = async () => {
     let apipath = `friendships/pending/${user.id}`;
     return await api.getApi
-      .get(apipath)
+      .get(apipath, apiheader)
       .then((response) => {
         if (response.status === 200) {
           let resp = response.data;
@@ -33,7 +39,7 @@ export default function NotificationsPage() {
       status: "Diterima",
     };
     return await api.putApi
-      .put(apipath, postdata)
+      .put(apipath, postdata, apiheader)
       .then((response) => {
         if (response.status === 201) {
           toast.success("Berhasil menerima pertemanan");

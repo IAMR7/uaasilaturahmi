@@ -89,7 +89,7 @@ export default function RegisterPage() {
       <div className="card flex-shrink-0 w-full lg:w-1/3 shadow-sm bg-base-100 lg:mb-0 mb-72">
         <div className="card-body w-full">
           <div className="flex flex-row justify-center items-center">
-            <img src="/images/uaa.png" alt="" width={86} />
+            <img src="/images/text-studentgram.png" alt="" className="w-36" />
           </div>
           <form className="flex flex-col gap-3">
             <div className="flex flex-row flex-wrap lg:flex-nowrap items-center gap-3">

@@ -10,8 +10,14 @@ export default function PasswordEditPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const apiheader = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
 
   const handleUpdatePassword = async () => {
     if (password !== confirmPassword) {
@@ -23,7 +29,7 @@ export default function PasswordEditPage() {
         password: password,
       };
       return await api.putApi
-        .put(apipath, postData)
+        .put(apipath, postData, apiheader)
         .then((response) => {
           if (response.status === 201) {
             let { message, user } = response.data;

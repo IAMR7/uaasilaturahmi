@@ -2,6 +2,7 @@ import axios from "axios";
 import { config } from "./config";
 
 var baseurl = config.API_URL;
+var token = "";
 
 // var baseurl = "https://dummyjson.com";
 
@@ -11,7 +12,7 @@ export const api = {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      // Authorization: "Basic " + token,
+      Authorization: "Basic " + token,
     },
     method: "post",
   }),
@@ -20,7 +21,7 @@ export const api = {
     headers: {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
-      // Authorization: "Basic " + token,
+      Authorization: "Basic " + token,
     },
     method: "post",
   }),
@@ -29,7 +30,7 @@ export const api = {
     headers: {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
-      // Authorization: "Basic " + token,
+      Authorization: "Basic " + token,
     },
     method: "post",
   }),
@@ -40,13 +41,14 @@ export const api = {
       "Content-Type": "application/json",
     },
     method: "get",
+    Authorization: "Basic " + token,
   }),
   putApi: axios.create({
     baseURL: baseurl,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      //   Authorization: "Basic " + token,
+      Authorization: "Basic " + token,
     },
     method: "put",
   }),
@@ -55,7 +57,7 @@ export const api = {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      //   Authorization: "Basic " + token,
+      Authorization: "Basic " + token,
     },
     method: "delete",
   }),
@@ -64,7 +66,7 @@ export const api = {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      //   Authorization: "Basic " + token,
+      Authorization: "Basic " + token,
     },
     method: "patch",
   }),
